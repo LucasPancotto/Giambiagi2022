@@ -22,10 +22,8 @@ onorm    = [y_data.mean(0), y_data.std(0)]
 # Batch size
 mbsize   = int(np.shape(x_data)[0]/2)
 
-# Piecewise constant learning rate
-# lr = 1e-5
-# lr = 1e-6
-lr = 1e-7
+# Learning rate
+lr = 1e-5
 
 PINN = PhysicsInformedNN(layers,
                          activation='siren',
@@ -33,7 +31,6 @@ PINN = PhysicsInformedNN(layers,
                          norm_in=inorm,
                          norm_out=onorm,
                          norm_out_type='z-score',
-                         # inverse=[{'type': 'const', 'value': 1.0}],
                          restore=True)
 PINN.optimizer.learning_rate.assign(lr)
 
@@ -41,7 +38,7 @@ PINN.optimizer.learning_rate.assign(lr)
 def valid_func(self, x_plot):
     def validation(ep):
         y_pred = self.model(x_plot)[0].numpy()
-        np.save('pred', y_pred)
+        np.save(f'pred_{ep:05}', y_pred)
     return validation
 PINN.validation = valid_func(PINN, x_data)
 
@@ -79,7 +76,7 @@ PINN.train(x_data, y_data,
            lorenz_system,
            epochs=100000,
            batch_size=mbsize,
-           data_mask=[False, True, False],
+           data_mask=[False, True, False], # Apply data loss only to second component
            lambda_phys=1.0,
            alpha=0.1,
            valid_freq=10,

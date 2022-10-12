@@ -65,6 +65,7 @@ def lorenz_system(model, coords, params):
     z_t = tape.gradient(z_p, coords)[:,0]
     del tape
 
+    # Coefficients are now new unknowns
     sigma = inv[0][:,0]
     rho   = inv[1][:,0]
     beta  = inv[2][:,0]
