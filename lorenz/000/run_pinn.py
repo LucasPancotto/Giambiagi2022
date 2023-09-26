@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 from   tensorflow import keras
 
-from PINNs import PhysicsInformedNN
+from pinn import PhysicsInformedNN
 
 # NN params
 layers = [1]+[128]*8+[3]
@@ -71,13 +71,13 @@ def lorenz_system(model, coords, params):
     f1 = x_t - (sigma*(y_p - x_p))
     f2 = y_t - (x_p*(rho - z_p) - y_p)
     f3 = z_t - (x_p*y_p - beta*z_p)
-        
+
     return [f1, f2, f3]
 
 # Train
 PINN.train(x_data, y_data,
            lorenz_system,
-           epochs=100000,
+           epochs=100,
            batch_size=mbsize,
            data_mask=[True, True, True],
            lambda_phys=1.0,
